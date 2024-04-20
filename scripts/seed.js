@@ -4,7 +4,7 @@ const {
   users,
 } = require('../src/app/lib/placeholder-data.js');
 
-async function seedUsers(client) {
+async function seedusers(client) {
   try {
     await client.sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
     // Create the "users" table if it doesn't exist
@@ -19,7 +19,7 @@ async function seedUsers(client) {
     console.log(`Created "users" table`);
 
     // Insert data into the "users" table
-    const insertedUsers = await Promise.all(
+    const insertedusers = await Promise.all(
       users.map(async (user) => {
         return client.sql`
         INSERT INTO users (id, name, role)
@@ -29,11 +29,11 @@ async function seedUsers(client) {
       }),
     );
 
-    console.log(`Seeded ${insertedUsers.length} users`);
+    console.log(`Seeded ${insertedusers.length} users`);
 
     return {
       createTable,
-      users: insertedUsers,
+      users: insertedusers,
     };
   } catch (error) {
     console.error('Error seeding users:', error);
@@ -52,10 +52,10 @@ async function seedSchedule(client) {
     partner_id UUID NOT NULL,
     partner_name TEXT NOT NULL,
     entrepreneur_id UUID,
-    entrepreneur_id TEXT,
-    date VARCHAR(255) NOT NULL
-    time VARCHAR(255) NOT NULL,
-    status VARCHAR(255) NOT NULL,
+    entrepreneur_name TEXT,
+    date VARCHAR(255) NOT NULL,
+    duration TEXT,
+    status VARCHAR(255) NOT NULL
   );
 `;
 
@@ -65,8 +65,8 @@ async function seedSchedule(client) {
     const insertedSchedules = await Promise.all(
       schedules.map(
         (schedule) => client.sql`
-        INSERT INTO schedule (partner_id, partner_name, date, time, status)
-        VALUES (${schedule.partner_id}, ${schedule.partner_name}, ${schedule.date}, ${schedule.time}, ${schedule.status})
+        INSERT INTO schedule (partner_id, partner_name, date, duration, status)
+        VALUES (${schedule.partner_id}, ${schedule.partner_name}, ${schedule.date}, ${schedule.duration}, ${schedule.status})
         ON CONFLICT (id) DO NOTHING;
       `,
       ),
@@ -88,7 +88,7 @@ async function seedSchedule(client) {
 async function main() {
   const client = await db.connect();
 
-  await seedUsers(client);
+  await seedusers(client);
   await seedSchedule(client);
 
   await client.end();

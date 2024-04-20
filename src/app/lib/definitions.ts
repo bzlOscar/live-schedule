@@ -12,6 +12,6 @@ export type Schedule = {
   entrepreneur_id: string;
   entrepreneur_name: string;
   date: string;
-  time: string;
+  duration: string;
   status: 'accepted' | 'declined';
 };
